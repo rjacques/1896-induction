@@ -1,0 +1,648 @@
+---
+import { readdirSync } from "node:fs";
+import { resolve } from "node:path";
+import "../styles/global.css";
+
+const pageTitle = "1896 Brand Induction";
+const storyboardProductSite = "https://www.1896.co.za/";
+const welcomeCopy = [
+  "Welcome to the 1896 Brand Induction.",
+  "This introduction introduces who we are as a brand, what we stand for, and what it means to represent 1896 in-store.",
+  "You'll learn about the story behind 1896, how we think about luxury, and how this shapes the way we engage with customers.",
+  "As you go through this induction, focus on how each idea would show up in a real interaction.",
+];
+
+const sectionNav = [
+  { href: "#welcome", label: "Welcome" },
+  { href: "#who-we-are", label: "Who We Are" },
+  { href: "#what-we-offer", label: "What We Offer" },
+  { href: "#living-the-brand", label: "Living 1896" },
+  { href: "#closing", label: "Closing" },
+];
+
+const videoLessons = [
+  {
+    id: "brand-story-video",
+    title: "Our Brand Story",
+    fileName: "2. 1896 Brand Story (3).mp4",
+    intro:
+      "Watch the video to understand where 1896 comes from and what it stands for.",
+    meaning:
+      "1896 is about modern luxury grounded in meaning. Jewellery is designed to be worn and lived in - not kept aside. It represents moments and personal stories.",
+    conversation:
+      "Stay attentive. Listen first. Share only what connects to the moment.",
+    quote: "",
+  },
+  {
+    id: "time-and-craft-video",
+    title: "Luxury as Time and Craft",
+    fileName: "3. Luxury as time & Craft.mp4",
+    intro:
+      "The value of a piece is not only in how it looks, but in the time, care, and craftsmanship behind it. Watch the video to learn more.",
+    meaning: "",
+    conversation:
+      "Introduce craftsmanship simply - when it adds meaning.",
+    quote: "",
+  },
+  {
+    id: "luxury-journey-video",
+    title: "The Luxury Journey",
+    fileName: "4. The Luxury Journey.mp4",
+    intro:
+      "Luxury is experienced in how a piece is handled, presented, and shared. Watch the video to learn more.",
+    meaning: "",
+    conversation:
+      "Stay present. Guide the interaction with quiet confidence.",
+    quote: "",
+  },
+];
+
+const productExplorationSteps = [
+  "Explore the website and select one collection and one piece.",
+  "Observe what stands out and the feeling it creates.",
+  "Consider the meaning behind the piece.",
+  "Connect it to a customer and a moment.",
+  "Describe it simply in 1-2 sentences.",
+  "Practise storytelling with a colleague.",
+];
+
+const knowledgeCheckLesson3 = {
+  promptLead: "A customer says:",
+  promptQuote: '"I want something special... I just don\'t want it to feel over the top."',
+  promptTail: "What would you say next?",
+  options: [
+    'A) "Then you should look at our rarest options - that is what makes it special."',
+    'B) "Tell me a bit about the moment - and how you\'d like to wear the piece - then I\'ll show you a few options that fit."',
+    'C) "Let\'s start with the newest pieces - those are usually the best choice."',
+    'D) "If it must be special, the higher the price, the better."',
+  ],
+  answer: "B",
+  feedback:
+    'At 1896, "special" is not only about price or rarity - it is about meaning, and how the piece fits the customer\'s life.',
+};
+
+const servicePillars = [
+  {
+    title: "Warmth and Respect",
+    detail: "Give the customer space and match their pace.",
+  },
+  {
+    title: "Professionalism with Personality",
+    detail: "Be polished, while remaining natural and human.",
+  },
+  {
+    title: "Customer-led Experience",
+    detail: "Let the customer guide the interaction, and respond to what matters to them.",
+  },
+  {
+    title: "Storytelling and Expertise",
+    detail: "Connect each piece to meaning, not just features.",
+  },
+  {
+    title: "Safety and Comfort",
+    detail: "Create a calm, considered environment for the customer.",
+  },
+  {
+    title: "Creativity and Style",
+    detail: "Adapt your approach to the individual and the moment.",
+  },
+  {
+    title: "Digital Engagement",
+    detail: "Extend the experience beyond the store in a way that feels personal and considered.",
+  },
+];
+
+const knowledgeChecksLesson4 = [
+  {
+    prompt:
+      'A customer is browsing quietly and says, "I\'m just looking." What\'s the best next step?',
+    options: [
+      "A) Start explaining the full range.",
+      "B) Give them space and check back gently.",
+      "C) Ask about their budget immediately.",
+    ],
+    answer: "B",
+    feedback:
+      "A 1896 experience is customer-led. We respect the customer's pace and allow the conversation to unfold naturally.",
+  },
+  {
+    prompt:
+      'A customer asks, "What makes 1896 different?" Which response is most aligned with the brand?',
+    options: [
+      "A) We have higher quality and more exclusive products.",
+      "B) We've been around longer than most brands.",
+      "C) We focus on helping you choose a piece that fits your life and the moment you are celebrating.",
+    ],
+    answer: "C",
+    feedback:
+      "1896 is differentiated by <strong>how we connect jewellery to meaning</strong>, not by listing features or making comparisons.",
+  },
+];
+
+const mediaDir = resolve(process.cwd(), "public", "media");
+const mediaEntries = readdirSync(mediaDir).sort((a, b) => a.localeCompare(b));
+const toMediaUrl = (fileName) => `/media/${fileName}`;
+
+const imageFiles = mediaEntries.filter((name) => /\.(jpe?g|png|webp|avif)$/i.test(name));
+const videoFiles = mediaEntries.filter((name) => /\.mp4$/i.test(name));
+const mediaByName = new Map(mediaEntries.map((name) => [name.toLowerCase(), name]));
+const pickMedia = (name) => {
+  const match = mediaByName.get(name.toLowerCase());
+  return match ? toMediaUrl(match) : "";
+};
+
+const logoDarkFile = imageFiles.find((name) => /(^|[\s_])b_logo\.png$/i.test(name));
+const logoLightFile = imageFiles.find((name) => /(^|[\s_])w_logo\.png$/i.test(name));
+const photoFiles = imageFiles.filter((name) => !/logo/i.test(name));
+
+const tfgLogo = "/tfg-logo.svg";
+const logoDark = logoDarkFile ? toMediaUrl(logoDarkFile) : "";
+const logoLight = logoLightFile ? toMediaUrl(logoLightFile) : "";
+
+const findVideoSource = (targetName) => {
+  const match = videoFiles.find((name) => name.toLowerCase() === targetName.toLowerCase());
+  return match ? toMediaUrl(match) : "";
+};
+
+const findVideoSourceForLesson = (lessonIndex, fallbackName) => {
+  const preferredPrefix = `video ${lessonIndex + 1}`.toLowerCase();
+  const preferred = videoFiles.find((name) => name.toLowerCase().startsWith(preferredPrefix));
+  if (preferred) return toMediaUrl(preferred);
+  return findVideoSource(fallbackName);
+};
+
+const curatedImageNames = {
+  hero: "20260506_085331341_iOS.jpeg",
+  welcomeSign: "20260506_090014591_iOS.jpeg",
+  videoVisuals: [
+    "20260506_090801048_iOS.jpeg",
+    "20260506_101003242_iOS.jpeg",
+    "20260506_115943654_iOS.jpeg",
+  ],
+  videoPosters: [
+    "20260506_090539752_iOS.jpeg",
+    "20260506_101332680_iOS.jpeg",
+    "20260506_122416453_iOS.jpeg",
+  ],
+  productShowcase: [
+    "20260506_101131371_iOS.jpeg",
+    "20260506_101241591_iOS.jpeg",
+    "20260506_101400288_iOS.jpeg",
+    "20260506_112259174_iOS.jpeg",
+    "20260506_112452061_iOS.jpeg",
+    "20260506_112532376_iOS.jpeg",
+  ],
+  closingStory: [
+    "20260506_101955367_iOS.jpeg",
+    "20260506_113656197_iOS.jpeg",
+    "20260506_120130684_iOS.jpeg",
+    "20260506_120216558_iOS.jpeg",
+    "20260506_122345810_iOS.jpeg",
+    "20260506_123625809_iOS.jpeg",
+  ],
+};
+
+const usedPhotoNames = new Set([
+  curatedImageNames.hero,
+  curatedImageNames.welcomeSign,
+  ...curatedImageNames.videoVisuals,
+  ...curatedImageNames.videoPosters,
+  ...curatedImageNames.productShowcase,
+  ...curatedImageNames.closingStory,
+]);
+
+const welcomeSignImage = pickMedia(curatedImageNames.welcomeSign);
+const curatedVideoVisuals = curatedImageNames.videoVisuals.map((name) => pickMedia(name));
+const curatedVideoPosters = curatedImageNames.videoPosters.map((name) => pickMedia(name));
+
+const videos = videoLessons.map((video, index) => ({
+  ...video,
+  src: findVideoSourceForLesson(index, video.fileName),
+  poster: curatedVideoPosters[index] || "",
+  visual: curatedVideoVisuals[index] || "",
+}));
+
+const productImages = curatedImageNames.productShowcase.map((name) => pickMedia(name)).filter(Boolean);
+const closingImages = curatedImageNames.closingStory.map((name) => pickMedia(name)).filter(Boolean);
+const servicePillarVisual =
+  closingImages[1] || closingImages[0] || productImages[1] || productImages[0] || "";
+const knowledgeCheckCustomerImage =
+  pickMedia(curatedImageNames.closingStory[0]) || pickMedia(curatedImageNames.videoVisuals[1]) || "";
+const closingFocusStatements = [
+  "How you listen.",
+  "How you present a piece.",
+  "How you guide the conversation.",
+].map((text, index) => ({
+  text,
+  image: closingImages[index] || productImages[index] || "",
+}));
+const servicePillarsBackground =
+  pickMedia(curatedImageNames.closingStory[2]) || pickMedia(curatedImageNames.productShowcase[1]);
+const galleryImages = photoFiles
+  .filter((name) => !usedPhotoNames.has(name))
+  .map((name) => toMediaUrl(name));
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <style is:global>
+      :root {
+        --b-ink: #000000;
+        --b-paper: #ffffff;
+        --b-stone: #ece9e2;
+        --b-cream: rgb(239 230 218);
+        --b-sage: #adbeaf;
+        --b-sage-solid: rgb(166 188 177);
+        --b-sage-soft: #cfdccf;
+        --b-sage-fog: #e2ebe1;
+        --b-champagne: #c8a98a;
+        --b-muted: #6f6257;
+      }
+    </style>
+  </head>
+
+  <body class="bg-[#fff] text-black selection:bg-[#d6c2aa] selection:text-black">
+    <main class="mx-auto max-w-[1240px] px-3 py-5 md:px-8 md:py-10">
+      <header class="sticky top-3 z-40 rounded-[0.9rem] border border-[#dce1da] bg-white/95 px-3 py-3 shadow-[0_10px_26px_rgba(56,37,24,0.05)] backdrop-blur md:px-6">
+        <div class="flex items-center justify-between gap-3 md:hidden">
+          <div class="flex min-w-0 items-center gap-3">
+            <img src={tfgLogo} alt="TFG logo" class="h-10 w-10 shrink-0 object-cover" />
+            <p class="min-w-0 text-sm font-medium leading-5 text-black">{pageTitle}</p>
+          </div>
+
+          <details class="relative shrink-0 md:hidden" data-mobile-nav>
+            <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full border border-[#dce1da] bg-[#f8f7f5] text-black transition hover:bg-[#edf1ec] [&::-webkit-details-marker]:hidden">
+              <span class="sr-only">Toggle lesson navigation</span>
+              <span aria-hidden="true" class="flex flex-col gap-[0.28rem]">
+                <span class="block h-[2px] w-5 rounded-full bg-current"></span>
+                <span class="block h-[2px] w-5 rounded-full bg-current"></span>
+                <span class="block h-[2px] w-5 rounded-full bg-current"></span>
+              </span>
+            </summary>
+            <div class="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-64 max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-[0.9rem] border border-[#dce1da] bg-white p-2 shadow-[0_14px_36px_rgba(56,39,27,0.09)]">
+              <div class="flex flex-col gap-1.5 text-sm text-black">
+                {sectionNav.map((item) => (
+                  <a href={item.href} class="rounded-[0.75rem] px-4 py-3 transition hover:bg-[#edf1ec]" data-mobile-nav-link>{item.label}</a>
+                ))}
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="hidden md:flex md:items-center md:justify-between md:gap-6">
+          <div class="flex items-center gap-4">
+            <img src={tfgLogo} alt="TFG logo" class="h-10 w-10 object-cover" />
+            <p class="text-sm font-medium text-black">{pageTitle}</p>
+          </div>
+          <div class="flex flex-wrap gap-2 text-sm text-black">
+            {sectionNav.map((item) => (
+              <a href={item.href} class="rounded-full border border-[#dce1da] bg-[#f8f7f5] px-4 py-2 transition hover:bg-[#edf1ec]">{item.label}</a>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      <section id="welcome" class="relative mt-6 overflow-hidden rounded-[1rem] bg-[var(--b-cream)] scroll-mt-28">
+        <div class="relative px-5 py-14 md:px-12 md:py-20 lg:px-14 lg:py-24">
+          <div class="mx-auto max-w-4xl text-center">
+            {logoDark ? (
+              <img src={logoDark} alt="1896 logo" class="mx-auto h-10 w-auto object-contain md:h-12" />
+            ) : (
+              <span class="text-sm font-semibold tracking-[0.14em] text-black">1896</span>
+            )}
+
+            <p class="mt-12 text-xs font-medium uppercase tracking-[0.28em] text-black md:mt-14">Lesson 1</p>
+            <h1 class="mt-4 text-4xl font-medium uppercase tracking-[0.08em] text-black md:text-6xl">Welcome to 1896</h1>
+            <div class="mx-auto mt-6 h-px w-16 bg-[#c8b7a2]"></div>
+
+            <div class="mx-auto mt-8 max-w-3xl space-y-5 text-[1.08rem] leading-9 text-black">
+              {welcomeCopy.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+
+            <div class="mt-10 flex justify-center">
+              <a href="#who-we-are" class="inline-flex border-b border-[#3b3128] pb-1 text-sm font-semibold uppercase tracking-[0.14em] text-black transition hover:border-transparent hover:text-black">Start the journey</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="who-we-are" class="mt-14 space-y-8 border-t border-[#e8e2d8] pt-10 scroll-mt-28">
+        <div class="px-1 md:px-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-black">Lesson 2</p>
+          <h2 class="mt-3 text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">Who We Are</h2>
+        </div>
+
+        <div class="space-y-5">
+          {videos.map((video) => (
+            <article id={video.id} class="overflow-hidden rounded-[1rem] bg-[var(--b-sage-soft)] shadow-[0_14px_36px_rgba(56,39,27,0.05)]">
+              <div class="space-y-7 px-5 py-7 md:px-10 md:py-11">
+                <div>
+                  <h3 class="text-[1.6rem] font-semibold leading-[1.15] tracking-[-0.02em] text-black md:text-[2rem]">
+                    {video.title}
+                  </h3>
+                </div>
+
+                <div class="space-y-4 text-[1.02rem] leading-8 text-black">
+                  <p>{video.intro}</p>
+                  {video.meaning && <p>{video.meaning}</p>}
+                </div>
+
+                <div class="overflow-hidden rounded-[0.95rem] border border-[#d8cfc6] bg-[#f8f4f0]">
+                  {video.src ? (
+                    <video
+                      class="aspect-video h-full w-full bg-[#1a1613] object-cover"
+                      controls
+                      preload="metadata"
+                      poster={video.poster || undefined}
+                    >
+                      <source src={video.src} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <div class="flex aspect-video items-center justify-center bg-[linear-gradient(135deg,#ece2d8_0%,#d6c0ab_100%)]">
+                      <div class="text-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-black">Video Placeholder</p>
+                        <p class="mt-3 text-sm text-black">{video.fileName}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <p class="mt-8 border-l-2 border-[#c7d3c6] pl-4 text-[1.02rem] leading-8 text-black">
+                  <span
+                    aria-hidden="true"
+                    class="mb-2 block text-[#294034]"
+                  >
+                    <svg viewBox="0 0 20 20" class="block h-10 w-10" fill="none" stroke="currentColor" stroke-width="0.95">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.4 5.8h11.2c.88 0 1.6.72 1.6 1.6v5.2c0 .88-.72 1.6-1.6 1.6H8.6L5 17v-2.8H4.4c-.88 0-1.6-.72-1.6-1.6V7.4c0-.88.72-1.6 1.6-1.6Z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M7 9.5h6M7 12h4.2" />
+                    </svg>
+                  </span>
+                  <span class="block"><span class="font-semibold text-black">In conversation:</span> {video.conversation}</span>
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="what-we-offer" class="mt-14 space-y-8 border-t border-[#e8e2d8] pt-10 scroll-mt-28">
+        <div class="px-1 md:px-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-black">Lesson 3</p>
+          <h2 class="mt-3 text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">What We Offer</h2>
+          <p class="mt-6 max-w-5xl text-[1.08rem] leading-9 text-black">
+            1896 is a modern luxury jewellery brand rooted in heritage. We focus on meaning, not just exclusivity - often expressed as resonance over rarity. Customers choose a piece for what it represents - not only what it is.
+          </p>
+        </div>
+
+        <article class="rounded-[1rem] bg-[var(--b-cream)] p-5 shadow-[0_14px_36px_rgba(56,39,27,0.05)] md:p-8">
+          <p class="max-w-4xl text-[1.02rem] leading-8 text-black">
+            1896 includes natural diamonds, lab-grown diamonds, and high-end watches. Your role is not to promote one over another. It is to guide the choice based on the customer and the moment.
+          </p>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {productImages.map((image) => (
+              <div class="overflow-hidden rounded-[0.9rem] bg-[#f3ebe3]">
+                <img src={image} alt="1896 product reference" class="h-56 w-full object-cover md:h-64" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article class="rounded-[1rem] bg-[var(--b-cream)] px-5 py-8 shadow-[0_14px_36px_rgba(56,39,27,0.05)] md:px-10 md:py-12 lg:px-12">
+          <div class="mb-8 pt-2">
+            <h3 class="text-[1.35rem] font-semibold tracking-[-0.015em] text-black">Explore Our Products</h3>
+            <p class="mt-4 text-[1.02rem] leading-8 text-black">Take a short moment to explore the 1896 range. This helps connect product, meaning, and conversation.</p>
+            <a href={storyboardProductSite} target="_blank" rel="noreferrer" class="mt-3 inline-flex font-semibold text-black underline decoration-[#b99f89] underline-offset-4 hover:text-black">
+              {storyboardProductSite}
+            </a>
+          </div>
+
+          <ol class="grid gap-4 md:grid-cols-2">
+            {productExplorationSteps.map((step, index) => (
+              <li class="rounded-[0.95rem] border border-[#d8c8b6] bg-white/65 px-4 py-4 shadow-[0_10px_24px_rgba(66,45,30,0.05)] transition hover:-translate-y-[1px] hover:shadow-[0_14px_30px_rgba(66,45,30,0.08)] md:px-5">
+                <div class="flex items-start gap-4">
+                  <div class="shrink-0">
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#cfbba6] bg-[#f7efe6] text-[#705946]">
+                      <svg viewBox="0 0 20 20" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.1">
+                        <circle cx="8.6" cy="8.6" r="4.4" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.8 11.8 16.2 16.2M13.8 4.2h2.4M15 3v2.4" />
+                      </svg>
+                    </span>
+                    <p class="mt-2 text-[0.64rem] font-semibold uppercase tracking-[0.2em] text-black">Step {index + 1}</p>
+                  </div>
+                  <p class="pt-0.5 text-[1.02rem] leading-7 text-black">{step}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <div class="mt-10 border-l-2 border-[#d5c6b3] pl-4 md:mt-12 md:pl-5">
+            <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">In-store application</p>
+            <p class="mt-4 text-[1.02rem] leading-8 text-black">
+              Choose a piece. Notice how it feels and sits. Practise describing it simply and naturally to a colleague.
+            </p>
+          </div>
+
+          <div class="mt-10 border-l-2 border-[#d5c6b3] pl-4 md:mt-12 md:pl-5">
+            <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">Check yourself:</p>
+            <ul class="mt-4 space-y-3 text-[1.02rem] leading-8 text-black">
+              <li>Did you focus on meaning?</li>
+              <li>Did you keep the language natural?</li>
+              <li>Could you connect to the real moment?</li>
+            </ul>
+          </div>
+
+          <div class="mt-10 rounded-[0.9rem] border border-[#ced8ce] bg-white p-5 md:mt-12 md:p-6">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#cdb89f] bg-[#f8f1e8] text-[#735c47]">
+                <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.1">
+                  <circle cx="10" cy="10" r="6.2" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.8 10.2 9.4 11.8 12.4 8.7" />
+                </svg>
+              </span>
+              <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">Knowledge Check</p>
+            </div>
+            <div class="mt-4 grid gap-4 md:grid-cols-[1.05fr_0.95fr] md:items-start">
+              {knowledgeCheckCustomerImage && (
+                <figure class="overflow-hidden rounded-[0.82rem] border border-[#d9cec0] bg-[#f7efe5] md:order-2 md:justify-self-end">
+                  <img src={knowledgeCheckCustomerImage} alt="Customer in-store moment" class="h-56 w-full object-cover md:h-full md:min-h-[14rem]" loading="lazy" />
+                </figure>
+              )}
+              <div class={knowledgeCheckCustomerImage ? "md:order-1" : "md:col-span-2"}>
+                <p class="text-[1.02rem] leading-8 text-black">Let's pause for a moment.</p>
+                <p class="mt-4 text-[1.02rem] leading-8 text-black">
+                  {knowledgeCheckLesson3.promptLead} <span class="font-semibold">{knowledgeCheckLesson3.promptQuote}</span> {knowledgeCheckLesson3.promptTail}
+                </p>
+                <div class="mt-5 space-y-3">
+                  {knowledgeCheckLesson3.options.map((option) => (
+                    <div class="rounded-[0.75rem] bg-[#f7f0e6] px-4 py-3 text-black">{option}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <details class="group mt-5 rounded-[0.8rem] border border-[#ced8ce] bg-white p-4">
+              <summary class="cursor-pointer list-none text-sm font-semibold uppercase tracking-[0.14em] text-black [&::-webkit-details-marker]:hidden">
+                Reveal feedback
+              </summary>
+              <p class="mt-4 text-[1.02rem] leading-8 text-black">
+                The best answer is <span class="font-semibold">{knowledgeCheckLesson3.answer}</span>. {knowledgeCheckLesson3.feedback}
+              </p>
+            </details>
+          </div>
+        </article>
+      </section>
+
+      <section id="living-the-brand" class="mt-14 space-y-8 border-t border-[#e8e2d8] pt-10 scroll-mt-28">
+        <div class="px-1 md:px-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-black">Lesson 4</p>
+          <h2 class="mt-3 text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">Living the 1896 Brand</h2>
+          <p class="mt-6 max-w-5xl text-[1.08rem] leading-9 text-black">
+            At 1896, the brand is experienced through behaviour. How a customer is welcomed, how jewellery is handled,
+            and how conversations are paced all shape the experience.
+          </p>
+        </div>
+
+        <div class="grid gap-5 lg:grid-cols-[0.55fr_0.45fr]">
+          <article class="relative overflow-hidden rounded-[1rem] bg-[#c2d3c7] p-5 shadow-[0_14px_36px_rgba(56,39,27,0.08)] md:p-8">
+            {servicePillarsBackground && (
+              <>
+                <img
+                  src={servicePillarsBackground}
+                  alt=""
+                  class="pointer-events-none absolute inset-0 h-full w-full scale-[1.03] object-cover opacity-[0.44]"
+                  loading="lazy"
+                />
+                <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(246,252,246,0.74)_0%,rgba(226,238,231,0.64)_45%,rgba(194,212,201,0.74)_100%)]"></div>
+              </>
+            )}
+            <div class="relative z-10">
+              <h3 class="text-[1.35rem] font-semibold tracking-[-0.015em] text-black">Service Pillars</h3>
+              <p class="mt-4 text-[1.02rem] leading-8 text-black">These pillars guide how the experience should feel - not what should be said.</p>
+
+              {servicePillarVisual && (
+                <figure class="relative mt-6 overflow-hidden rounded-[0.98rem] border border-[#b6c7ba] bg-white/42 shadow-[0_12px_28px_rgba(44,33,24,0.1)]">
+                  <img src={servicePillarVisual} alt="1896 in-store and product visual" class="h-72 w-full object-cover md:h-80 lg:h-96" loading="lazy" />
+                  <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(170deg,rgba(20,14,11,0.12)_0%,rgba(20,14,11,0.42)_100%)]"></div>
+                </figure>
+              )}
+
+              <div class="mt-6 space-y-4">
+                {servicePillars.map((pillar) => (
+                  <details class="group rounded-[0.8rem] border border-[#bfd0c3] bg-white/62 px-4 py-3 backdrop-blur-[1px]">
+                    <summary class="cursor-pointer list-none text-black font-semibold [&::-webkit-details-marker]:hidden">
+                      <span class="flex items-center justify-between gap-3">
+                        {pillar.title}
+                        <span class="text-black transition group-open:rotate-45">+</span>
+                      </span>
+                    </summary>
+                    <p class="mt-4 text-[1.02rem] leading-8 text-black">{pillar.detail}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </article>
+
+          <article class="rounded-[1rem] bg-white/88 p-5 shadow-[0_14px_36px_rgba(56,39,27,0.05)] md:p-8">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#c6d2c4] bg-[#eef3ee] text-[#506452]">
+                <svg viewBox="0 0 20 20" class="h-4.5 w-4.5" fill="none" stroke="currentColor" stroke-width="1.1">
+                  <circle cx="10" cy="10" r="6.2" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.8 10.2 9.4 11.8 12.4 8.7" />
+                </svg>
+              </span>
+              <h3 class="text-[1.35rem] font-semibold tracking-[-0.015em] text-black">Knowledge Check</h3>
+            </div>
+            <div class="mt-5 space-y-5">
+              {knowledgeChecksLesson4.map((check) => (
+                <div class="border-t border-[#d8e0d8] pt-5 first:border-t-0 first:pt-0">
+                  <p class="text-[1.02rem] leading-8 text-black">{check.prompt}</p>
+                  <div class="mt-4 space-y-3">
+                    {check.options.map((option) => (
+                      <div class="rounded-[0.72rem] bg-[#f0f4f0] px-4 py-3 text-black">{option}</div>
+                    ))}
+                  </div>
+                  <details class="group mt-4 rounded-[0.8rem] border border-[#ced8ce] bg-white p-4">
+                    <summary class="cursor-pointer list-none text-sm font-semibold uppercase tracking-[0.14em] text-black [&::-webkit-details-marker]:hidden">
+                      Reveal feedback
+                    </summary>
+                    <p class="mt-4 text-[1.02rem] leading-8 text-black">
+                      The best answer is <span class="font-semibold">{check.answer}</span>. <span set:html={check.feedback}></span>
+                    </p>
+                  </details>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
+
+      </section>
+
+      <section id="closing" class="mt-10 scroll-mt-28">
+        <article class="overflow-hidden rounded-[1rem] bg-[radial-gradient(circle_at_18%_14%,rgba(183,205,194,0.22),transparent_36%),radial-gradient(circle_at_86%_82%,rgba(150,173,161,0.15),transparent_44%),linear-gradient(140deg,#22362d_0%,#18271f_52%,#141f1b_100%)] px-5 py-10 text-center shadow-[0_18px_40px_rgba(22,39,32,0.34)] md:px-10 md:py-14 lg:px-12">
+          {(logoLight || logoDark) && <img src={logoLight || logoDark} alt="1896 logo" class="mx-auto mb-10 h-10 w-auto object-contain md:mb-14" />}
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-[#efe4d7]">Before you continue</p>
+          <p class="mx-auto mt-4 max-w-3xl text-[1.02rem] leading-8 text-[#f4eadf]">Take a moment to pause.</p>
+          <p class="mx-auto mt-1 max-w-3xl text-[1.02rem] leading-8 text-[#f4eadf]">Think about your next interaction.</p>
+          <h2 class="mx-auto mt-4 max-w-3xl text-[1.95rem] font-semibold tracking-[-0.03em] text-[#fffaf3] md:text-[2.45rem]">
+            Not what you will say - but what you will notice.
+          </h2>
+          <p class="mx-auto mt-4 max-w-3xl text-[1.02rem] leading-8 text-[#f4eadf]">
+            At 1896, the experience is shaped in small, considered moments.
+          </p>
+          <div class="mx-auto mt-8 grid max-w-5xl gap-4 md:grid-cols-3">
+            {closingFocusStatements.map((item, index) => (
+              <article class="relative min-h-[12.5rem] overflow-hidden rounded-[0.95rem] border border-[#4c6157]">
+                {item.image ? (
+                  <img
+                    src={item.image}
+                    alt=""
+                    class="absolute inset-0 h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="absolute inset-0 bg-[linear-gradient(145deg,#4f675d_0%,#28342e_100%)]"></div>
+                )}
+                <div class="absolute inset-0 bg-[linear-gradient(160deg,rgba(16,20,17,0.2)_0%,rgba(16,20,17,0.68)_68%,rgba(16,20,17,0.84)_100%)]"></div>
+                <div class="relative z-10 flex h-full flex-col justify-between p-5 text-left md:p-6">
+                  <p class="text-[1.25rem] font-semibold leading-tight tracking-[-0.01em] text-[#fffaf3] md:text-[1.4rem]">
+                    {item.text}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <p class="mt-6 font-semibold italic text-[#f4eadf]">This is where the brand becomes real.</p>
+          <p class="mt-6 text-[#f4eadf]">You are now ready to represent the 1896 brand.</p>
+        </article>
+      </section>
+
+    </main>
+
+    <script is:inline>
+      const mobileNavs = document.querySelectorAll("[data-mobile-nav]");
+
+      document.addEventListener("click", (event) => {
+        mobileNavs.forEach((menu) => {
+          if (!menu.contains(event.target)) {
+            menu.removeAttribute("open");
+          }
+        });
+      });
+
+      mobileNavs.forEach((menu) => {
+        menu.querySelectorAll("[data-mobile-nav-link]").forEach((link) => {
+          link.addEventListener("click", () => {
+            menu.removeAttribute("open");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
+
+
