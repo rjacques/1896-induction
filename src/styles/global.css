@@ -122,3 +122,21 @@ body {
   border-radius: 999px;
   background: linear-gradient(90deg, var(--tfg-purple), rgba(122, 47, 150, 0.12));
 }
+
+.tfg-accordion > summary {
+  transition: color 220ms ease;
+}
+
+.tfg-accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 260ms ease,
+    opacity 180ms ease;
+}
+
+.tfg-accordion[open] .tfg-accordion-content {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}

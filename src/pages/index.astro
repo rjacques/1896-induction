@@ -5,13 +5,6 @@ import "../styles/global.css";
 
 const pageTitle = "1896 Brand Induction";
 const storyboardProductSite = "https://www.1896.co.za/";
-const welcomeCopy = [
-  "Welcome to the 1896 Brand Induction.",
-  "This introduction introduces who we are as a brand, what we stand for, and what it means to represent 1896 in-store.",
-  "You'll learn about the story behind 1896, how we think about luxury, and how this shapes the way we engage with customers.",
-  "As you go through this induction, focus on how each idea would show up in a real interaction.",
-];
-
 const sectionNav = [
   { href: "#welcome", label: "Welcome" },
   { href: "#who-we-are", label: "Who We Are" },
@@ -31,7 +24,6 @@ const videoLessons = [
       "1896 is about modern luxury grounded in meaning. Jewellery is designed to be worn and lived in - not kept aside. It represents moments and personal stories.",
     conversation:
       "Stay attentive. Listen first. Share only what connects to the moment.",
-    quote: "",
   },
   {
     id: "time-and-craft-video",
@@ -42,7 +34,6 @@ const videoLessons = [
     meaning: "",
     conversation:
       "Introduce craftsmanship simply - when it adds meaning.",
-    quote: "",
   },
   {
     id: "luxury-journey-video",
@@ -53,7 +44,6 @@ const videoLessons = [
     meaning: "",
     conversation:
       "Stay present. Guide the interaction with quiet confidence.",
-    quote: "",
   },
 ];
 
@@ -153,7 +143,6 @@ const pickMedia = (name) => {
 
 const logoDarkFile = imageFiles.find((name) => /(^|[\s_])b_logo\.png$/i.test(name));
 const logoLightFile = imageFiles.find((name) => /(^|[\s_])w_logo\.png$/i.test(name));
-const photoFiles = imageFiles.filter((name) => !/logo/i.test(name));
 
 const tfgLogo = "/tfg-logo.svg";
 const logoDark = logoDarkFile ? toMediaUrl(logoDarkFile) : "";
@@ -172,13 +161,7 @@ const findVideoSourceForLesson = (lessonIndex, fallbackName) => {
 };
 
 const curatedImageNames = {
-  hero: "20260506_085331341_iOS.jpeg",
-  welcomeSign: "20260506_090014591_iOS.jpeg",
-  videoVisuals: [
-    "20260506_090801048_iOS.jpeg",
-    "20260506_101003242_iOS.jpeg",
-    "20260506_115943654_iOS.jpeg",
-  ],
+  hero: "banner.jpg",
   videoPosters: [
     "20260506_090539752_iOS.jpeg",
     "20260506_101332680_iOS.jpeg",
@@ -202,24 +185,13 @@ const curatedImageNames = {
   ],
 };
 
-const usedPhotoNames = new Set([
-  curatedImageNames.hero,
-  curatedImageNames.welcomeSign,
-  ...curatedImageNames.videoVisuals,
-  ...curatedImageNames.videoPosters,
-  ...curatedImageNames.productShowcase,
-  ...curatedImageNames.closingStory,
-]);
-
-const welcomeSignImage = pickMedia(curatedImageNames.welcomeSign);
-const curatedVideoVisuals = curatedImageNames.videoVisuals.map((name) => pickMedia(name));
+const heroImage = pickMedia(curatedImageNames.hero);
 const curatedVideoPosters = curatedImageNames.videoPosters.map((name) => pickMedia(name));
 
 const videos = videoLessons.map((video, index) => ({
   ...video,
   src: findVideoSourceForLesson(index, video.fileName),
   poster: curatedVideoPosters[index] || "",
-  visual: curatedVideoVisuals[index] || "",
 }));
 
 const productImages = curatedImageNames.productShowcase.map((name) => pickMedia(name)).filter(Boolean);
@@ -227,20 +199,14 @@ const closingImages = curatedImageNames.closingStory.map((name) => pickMedia(nam
 const servicePillarVisual =
   closingImages[1] || closingImages[0] || productImages[1] || productImages[0] || "";
 const knowledgeCheckCustomerImage =
-  pickMedia(curatedImageNames.closingStory[0]) || pickMedia(curatedImageNames.videoVisuals[1]) || "";
+  pickMedia(curatedImageNames.closingStory[0]) || productImages[1] || "";
 const closingFocusStatements = [
   "How you listen.",
   "How you present a piece.",
   "How you guide the conversation.",
-].map((text, index) => ({
-  text,
-  image: closingImages[index] || productImages[index] || "",
-}));
+];
 const servicePillarsBackground =
   pickMedia(curatedImageNames.closingStory[2]) || pickMedia(curatedImageNames.productShowcase[1]);
-const galleryImages = photoFiles
-  .filter((name) => !usedPhotoNames.has(name))
-  .map((name) => toMediaUrl(name));
 ---
 
 <html lang="en">
@@ -305,29 +271,62 @@ const galleryImages = photoFiles
         </div>
       </header>
 
-      <section id="welcome" class="relative mt-6 overflow-hidden rounded-[1rem] bg-[var(--b-cream)] scroll-mt-28">
-        <div class="relative px-5 py-14 md:px-12 md:py-20 lg:px-14 lg:py-24">
-          <div class="mx-auto max-w-4xl text-center">
-            {logoDark ? (
-              <img src={logoDark} alt="1896 logo" class="mx-auto h-10 w-auto object-contain md:h-12" />
-            ) : (
-              <span class="text-sm font-semibold tracking-[0.14em] text-black">1896</span>
-            )}
+      <section id="welcome" class="relative mt-6 scroll-mt-28">
+        <div class="relative overflow-hidden rounded-[1rem] bg-[var(--b-cream)]">
+          {heroImage && (
+              <img
+                src={heroImage}
+                alt=""
+                class="pointer-events-none absolute inset-0 h-full w-full object-cover scale-[1.03]"
+                loading="eager"
+              />
+          )}
+          <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(18,14,10,0.46)_0%,rgba(18,14,10,0.3)_42%,rgba(18,14,10,0.58)_100%)]"></div>
+          <div class="relative px-5 py-14 md:px-12 md:py-20 lg:px-14 lg:py-24">
+            <div class="mx-auto max-w-4xl text-center">
+              {logoLight || logoDark ? (
+                <img src={logoLight || logoDark} alt="1896 logo" class="mx-auto h-10 w-auto object-contain md:h-12" />
+              ) : (
+                <span class="text-sm font-semibold tracking-[0.14em] text-white">1896</span>
+              )}
 
-            <p class="mt-12 text-xs font-medium uppercase tracking-[0.28em] text-black md:mt-14">Lesson 1</p>
-            <h1 class="mt-4 text-4xl font-medium uppercase tracking-[0.08em] text-black md:text-6xl">Welcome to 1896</h1>
-            <div class="mx-auto mt-6 h-px w-16 bg-[#c8b7a2]"></div>
-
-            <div class="mx-auto mt-8 max-w-3xl space-y-5 text-[1.08rem] leading-9 text-black">
-              {welcomeCopy.map((paragraph) => (
-                <p>{paragraph}</p>
-              ))}
-            </div>
-
-            <div class="mt-10 flex justify-center">
-              <a href="#who-we-are" class="inline-flex border-b border-[#3b3128] pb-1 text-sm font-semibold uppercase tracking-[0.14em] text-black transition hover:border-transparent hover:text-black">Start the journey</a>
+              <h1 class="mt-10 text-4xl font-medium uppercase tracking-[0.08em] text-white md:mt-12 md:text-6xl">Welcome to 1896</h1>
+              <div class="mx-auto mt-6 h-px w-16 bg-[rgba(255,244,230,0.82)]"></div>
             </div>
           </div>
+        </div>
+
+        <div id="lesson-1" class="mt-14 space-y-8">
+          <div class="px-1 md:px-2">
+            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-black">Lesson 1</p>
+            <h2 class="mt-3 text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">Welcome</h2>
+          </div>
+
+          <article class="overflow-hidden rounded-[1rem] bg-[var(--b-cream)] shadow-[0_14px_36px_rgba(56,39,27,0.05)]">
+            <div class="space-y-7 px-5 py-7 md:px-10 md:py-11">
+              <div class="space-y-5 text-[1.02rem] leading-8 text-black">
+                <p><b>Welcome to the 1896 Brand Induction.</b></p>
+                <p>
+                  This introduction introduces who we are as a brand, what we stand for, and what it means to
+                  represent 1896 in-store.
+                </p>
+                <p>
+                  You'll learn about the story behind 1896, how we think about luxury, and how this shapes the
+                  way we engage with customers.
+                </p>
+                <p>As you go through this induction, focus on how each idea would show up in a real interaction.</p>
+              </div>
+
+              <div>
+                <a
+                  href="#who-we-are"
+                  class="inline-flex items-center rounded-full bg-[#1f1a16] px-5 py-3 text-sm font-semibold uppercase tracking-[0.14em] text-[#f7f1e8] shadow-[0_10px_24px_rgba(31,26,22,0.22)] transition hover:bg-[#000000]"
+                >
+                  Start the journey
+                </a>
+              </div>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -373,18 +372,18 @@ const galleryImages = photoFiles
                   )}
                 </div>
 
-                <p class="mt-8 border-l-2 border-[#c7d3c6] pl-4 text-[1.02rem] leading-8 text-black">
+                <div class="mt-8 flex items-center gap-4 rounded-[0.9rem] border border-[#c7d3c6] bg-white/42 px-4 py-4 text-[1.02rem] leading-8 text-black">
                   <span
                     aria-hidden="true"
-                    class="mb-2 block text-[#294034]"
+                    class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#b9cabc] bg-[#edf3ed] text-[#294034]"
                   >
-                    <svg viewBox="0 0 20 20" class="block h-10 w-10" fill="none" stroke="currentColor" stroke-width="0.95">
+                    <svg viewBox="0 0 20 20" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="0.95">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M4.4 5.8h11.2c.88 0 1.6.72 1.6 1.6v5.2c0 .88-.72 1.6-1.6 1.6H8.6L5 17v-2.8H4.4c-.88 0-1.6-.72-1.6-1.6V7.4c0-.88.72-1.6 1.6-1.6Z" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M7 9.5h6M7 12h4.2" />
                     </svg>
                   </span>
-                  <span class="block"><span class="font-semibold text-black">In conversation:</span> {video.conversation}</span>
-                </p>
+                  <p class="m-0"><span class="font-semibold text-black">In conversation:</span> {video.conversation}</p>
+                </div>
               </div>
             </article>
           ))}
@@ -425,36 +424,34 @@ const galleryImages = photoFiles
           <ol class="grid gap-4 md:grid-cols-2">
             {productExplorationSteps.map((step, index) => (
               <li class="rounded-[0.95rem] border border-[#d8c8b6] bg-white/65 px-4 py-4 shadow-[0_10px_24px_rgba(66,45,30,0.05)] transition hover:-translate-y-[1px] hover:shadow-[0_14px_30px_rgba(66,45,30,0.08)] md:px-5">
-                <div class="flex items-start gap-4">
-                  <div class="shrink-0">
-                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#cfbba6] bg-[#f7efe6] text-[#705946]">
-                      <svg viewBox="0 0 20 20" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.1">
-                        <circle cx="8.6" cy="8.6" r="4.4" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.8 11.8 16.2 16.2M13.8 4.2h2.4M15 3v2.4" />
-                      </svg>
-                    </span>
-                    <p class="mt-2 text-[0.64rem] font-semibold uppercase tracking-[0.2em] text-black">Step {index + 1}</p>
-                  </div>
-                  <p class="pt-0.5 text-[1.02rem] leading-7 text-black">{step}</p>
+                <div class="flex items-center gap-4">
+                  <span class="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[#cfbba6] bg-[#f7efe6] text-center text-[0.7rem] font-semibold uppercase leading-tight tracking-[0.14em] text-[#705946]">
+                    Step {index + 1}
+                  </span>
+                  <p class="text-[1.02rem] leading-7 text-black">{step}</p>
                 </div>
               </li>
             ))}
           </ol>
 
-          <div class="mt-10 border-l-2 border-[#d5c6b3] pl-4 md:mt-12 md:pl-5">
-            <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">In-store application</p>
-            <p class="mt-4 text-[1.02rem] leading-8 text-black">
-              Choose a piece. Notice how it feels and sits. Practise describing it simply and naturally to a colleague.
-            </p>
-          </div>
+          <div class="mt-10 grid gap-5 md:mt-12 md:grid-cols-2">
+            <div class="border-l-2 border-[#d5c6b3] pl-4 md:pl-5">
+              <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">In-store application</p>
+              <ul class="mt-4 list-disc space-y-3 pl-5 text-[1.02rem] leading-8 text-black marker:text-black">
+                <li>Choose a piece.</li>
+                <li>Notice how it feels and sits.</li>
+                <li>Practise describing it simply and naturally to a colleague.</li>
+              </ul>
+            </div>
 
-          <div class="mt-10 border-l-2 border-[#d5c6b3] pl-4 md:mt-12 md:pl-5">
-            <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">Check yourself:</p>
-            <ul class="mt-4 space-y-3 text-[1.02rem] leading-8 text-black">
-              <li>Did you focus on meaning?</li>
-              <li>Did you keep the language natural?</li>
-              <li>Could you connect to the real moment?</li>
-            </ul>
+            <div class="border-l-2 border-[#d5c6b3] pl-4 md:pl-5">
+              <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">Check yourself:</p>
+              <ul class="mt-4 list-disc space-y-3 pl-5 text-[1.02rem] leading-8 text-black marker:text-black">
+                <li>Did you focus on meaning?</li>
+                <li>Did you keep the language natural?</li>
+                <li>Could you connect to the real moment?</li>
+              </ul>
+            </div>
           </div>
 
           <div class="mt-10 rounded-[0.9rem] border border-[#ced8ce] bg-white p-5 md:mt-12 md:p-6">
@@ -533,14 +530,18 @@ const galleryImages = photoFiles
 
               <div class="mt-6 space-y-4">
                 {servicePillars.map((pillar) => (
-                  <details class="group rounded-[0.8rem] border border-[#bfd0c3] bg-white/62 px-4 py-3 backdrop-blur-[1px]">
+                  <details class="tfg-accordion group rounded-[0.8rem] border border-[#bfd0c3] bg-white/62 px-4 py-3 backdrop-blur-[1px]" data-service-pillar>
                     <summary class="cursor-pointer list-none text-black font-semibold [&::-webkit-details-marker]:hidden">
                       <span class="flex items-center justify-between gap-3">
                         {pillar.title}
                         <span class="text-black transition group-open:rotate-45">+</span>
                       </span>
                     </summary>
-                    <p class="mt-4 text-[1.02rem] leading-8 text-black">{pillar.detail}</p>
+                    <div class="tfg-accordion-content">
+                      <div class="overflow-hidden">
+                        <p class="pt-4 text-[1.02rem] leading-8 text-black">{pillar.detail}</p>
+                      </div>
+                    </div>
                   </details>
                 ))}
               </div>
@@ -586,31 +587,19 @@ const galleryImages = photoFiles
         <article class="overflow-hidden rounded-[1rem] bg-[radial-gradient(circle_at_18%_14%,rgba(183,205,194,0.22),transparent_36%),radial-gradient(circle_at_86%_82%,rgba(150,173,161,0.15),transparent_44%),linear-gradient(140deg,#22362d_0%,#18271f_52%,#141f1b_100%)] px-5 py-10 text-center shadow-[0_18px_40px_rgba(22,39,32,0.34)] md:px-10 md:py-14 lg:px-12">
           {(logoLight || logoDark) && <img src={logoLight || logoDark} alt="1896 logo" class="mx-auto mb-10 h-10 w-auto object-contain md:mb-14" />}
           <p class="text-xs font-semibold uppercase tracking-[0.22em] text-[#efe4d7]">Before you continue</p>
-          <p class="mx-auto mt-4 max-w-3xl text-[1.02rem] leading-8 text-[#f4eadf]">Take a moment to pause.</p>
-          <p class="mx-auto mt-1 max-w-3xl text-[1.02rem] leading-8 text-[#f4eadf]">Think about your next interaction.</p>
-          <h2 class="mx-auto mt-4 max-w-3xl text-[1.95rem] font-semibold tracking-[-0.03em] text-[#fffaf3] md:text-[2.45rem]">
+          <p class="mx-auto mt-4 max-w-5xl text-[1.02rem] leading-8 text-[#f4eadf]">Take a moment to pause. Think about your next interaction.</p>
+          <h2 class="mx-auto mt-4 max-w-5xl text-[1.95rem] font-semibold tracking-[-0.03em] text-[#fffaf3] md:text-[2.45rem]">
             Not what you will say - but what you will notice.
           </h2>
           <p class="mx-auto mt-4 max-w-3xl text-[1.02rem] leading-8 text-[#f4eadf]">
             At 1896, the experience is shaped in small, considered moments.
           </p>
           <div class="mx-auto mt-8 grid max-w-5xl gap-4 md:grid-cols-3">
-            {closingFocusStatements.map((item, index) => (
-              <article class="relative min-h-[12.5rem] overflow-hidden rounded-[0.95rem] border border-[#4c6157]">
-                {item.image ? (
-                  <img
-                    src={item.image}
-                    alt=""
-                    class="absolute inset-0 h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div class="absolute inset-0 bg-[linear-gradient(145deg,#4f675d_0%,#28342e_100%)]"></div>
-                )}
-                <div class="absolute inset-0 bg-[linear-gradient(160deg,rgba(16,20,17,0.2)_0%,rgba(16,20,17,0.68)_68%,rgba(16,20,17,0.84)_100%)]"></div>
-                <div class="relative z-10 flex h-full flex-col justify-between p-5 text-left md:p-6">
+            {closingFocusStatements.map((item) => (
+              <article class="flex min-h-[10rem] items-center justify-center overflow-hidden rounded-[0.95rem] border border-[#4c6157] bg-[linear-gradient(145deg,#4f675d_0%,#28342e_100%)] p-4 text-center md:min-h-[10.75rem] md:p-5">
+                <div class="relative z-10">
                   <p class="text-[1.25rem] font-semibold leading-tight tracking-[-0.01em] text-[#fffaf3] md:text-[1.4rem]">
-                    {item.text}
+                    {item}
                   </p>
                 </div>
               </article>
@@ -641,8 +630,20 @@ const galleryImages = photoFiles
           });
         });
       });
+
+      const servicePillars = document.querySelectorAll("[data-service-pillar]");
+
+      servicePillars.forEach((pillar) => {
+        pillar.addEventListener("toggle", () => {
+          if (!pillar.open) return;
+
+          servicePillars.forEach((otherPillar) => {
+            if (otherPillar !== pillar) {
+              otherPillar.removeAttribute("open");
+            }
+          });
+        });
+      });
     </script>
   </body>
 </html>
-
-
