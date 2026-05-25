@@ -4,7 +4,13 @@ import { resolve } from "node:path";
 import "../styles/global.css";
 
 const pageTitle = "1896 Brand Induction";
-const storyboardProductSite = "https://www.1896.co.za/";
+const productCollectionsLink = "https://www.eighteen96.co.za/collections";
+const productReferenceLinks = [
+  {
+    label: "Browse 1896 Collections",
+    href: productCollectionsLink,
+  },
+];
 const sectionNav = [
   { href: "#welcome", label: "Welcome" },
   { href: "#who-we-are", label: "Who We Are" },
@@ -19,11 +25,9 @@ const videoLessons = [
     title: "Our Brand Story",
     fileName: "2. 1896 Brand Story (3).mp4",
     intro:
-      "Watch the video to understand where 1896 comes from and what it stands for.",
+      "1896 is about modern luxury grounded in meaning. Our jewellery is designed to be worn and lived in, not kept aside. It represents moments and personal stories.",
     meaning:
-      "1896 is about modern luxury grounded in meaning. Jewellery is designed to be worn and lived in - not kept aside. It represents moments and personal stories.",
-    conversation:
-      "Stay attentive. Listen first. Share only what connects to the moment.",
+      "Watch the video to understand our brand story.",
   },
   {
     id: "time-and-craft-video",
@@ -32,8 +36,6 @@ const videoLessons = [
     intro:
       "The value of a piece is not only in how it looks, but in the time, care, and craftsmanship behind it. Watch the video to learn more.",
     meaning: "",
-    conversation:
-      "Introduce craftsmanship simply - when it adds meaning.",
   },
   {
     id: "luxury-journey-video",
@@ -42,8 +44,6 @@ const videoLessons = [
     intro:
       "Luxury is experienced in how a piece is handled, presented, and shared. Watch the video to learn more.",
     meaning: "",
-    conversation:
-      "Stay present. Guide the interaction with quiet confidence.",
   },
 ];
 
@@ -61,10 +61,23 @@ const knowledgeCheckLesson3 = {
   promptQuote: '"I want something special... I just don\'t want it to feel over the top."',
   promptTail: "What would you say next?",
   options: [
-    'A) "Then you should look at our rarest options - that is what makes it special."',
-    'B) "Tell me a bit about the moment - and how you\'d like to wear the piece - then I\'ll show you a few options that fit."',
-    'C) "Let\'s start with the newest pieces - those are usually the best choice."',
-    'D) "If it must be special, the higher the price, the better."',
+    {
+      id: "A",
+      text: '"Then you should look at our rarest options - that is what makes it special."',
+    },
+    {
+      id: "B",
+      text:
+        '"Tell me a bit about the moment - and how you\'d like to wear the piece - then I\'ll show you a few options that fit."',
+    },
+    {
+      id: "C",
+      text: '"Let\'s start with the newest pieces - those are usually the best choice."',
+    },
+    {
+      id: "D",
+      text: '"If it must be special, the higher the price, the better."',
+    },
   ],
   answer: "B",
   feedback:
@@ -133,7 +146,6 @@ const mediaDir = resolve(process.cwd(), "public", "media");
 const mediaEntries = readdirSync(mediaDir).sort((a, b) => a.localeCompare(b));
 const toMediaUrl = (fileName) => `/media/${fileName}`;
 
-const imageFiles = mediaEntries.filter((name) => /\.(jpe?g|png|webp|avif)$/i.test(name));
 const videoFiles = mediaEntries.filter((name) => /\.mp4$/i.test(name));
 const mediaByName = new Map(mediaEntries.map((name) => [name.toLowerCase(), name]));
 const pickMedia = (name) => {
@@ -141,12 +153,9 @@ const pickMedia = (name) => {
   return match ? toMediaUrl(match) : "";
 };
 
-const logoDarkFile = imageFiles.find((name) => /(^|[\s_])b_logo\.png$/i.test(name));
-const logoLightFile = imageFiles.find((name) => /(^|[\s_])w_logo\.png$/i.test(name));
-
 const tfgLogo = "/tfg-logo.svg";
-const logoDark = logoDarkFile ? toMediaUrl(logoDarkFile) : "";
-const logoLight = logoLightFile ? toMediaUrl(logoLightFile) : "";
+const logoDark = "";
+const logoLight = pickMedia("_1896 W_Logo.png");
 
 const findVideoSource = (targetName) => {
   const match = videoFiles.find((name) => name.toLowerCase() === targetName.toLowerCase());
@@ -167,22 +176,6 @@ const curatedImageNames = {
     "20260506_101332680_iOS.jpeg",
     "20260506_122416453_iOS.jpeg",
   ],
-  productShowcase: [
-    "20260506_101131371_iOS.jpeg",
-    "20260506_101241591_iOS.jpeg",
-    "20260506_101400288_iOS.jpeg",
-    "20260506_112259174_iOS.jpeg",
-    "20260506_112452061_iOS.jpeg",
-    "20260506_112532376_iOS.jpeg",
-  ],
-  closingStory: [
-    "20260506_101955367_iOS.jpeg",
-    "20260506_113656197_iOS.jpeg",
-    "20260506_120130684_iOS.jpeg",
-    "20260506_120216558_iOS.jpeg",
-    "20260506_122345810_iOS.jpeg",
-    "20260506_123625809_iOS.jpeg",
-  ],
 };
 
 const heroImage = pickMedia(curatedImageNames.hero);
@@ -194,19 +187,33 @@ const videos = videoLessons.map((video, index) => ({
   poster: curatedVideoPosters[index] || "",
 }));
 
-const productImages = curatedImageNames.productShowcase.map((name) => pickMedia(name)).filter(Boolean);
-const closingImages = curatedImageNames.closingStory.map((name) => pickMedia(name)).filter(Boolean);
-const servicePillarVisual =
-  closingImages[1] || closingImages[0] || productImages[1] || productImages[0] || "";
-const knowledgeCheckCustomerImage =
-  pickMedia(curatedImageNames.closingStory[0]) || productImages[1] || "";
+const servicePillarVisual = pickMedia("20260506_113656197_iOS.jpeg");
+const knowledgeCheckCustomerImage = pickMedia("20260506_101955367_iOS.jpeg");
 const closingFocusStatements = [
   "How you listen.",
   "How you present a piece.",
   "How you guide the conversation.",
 ];
-const servicePillarsBackground =
-  pickMedia(curatedImageNames.closingStory[2]) || pickMedia(curatedImageNames.productShowcase[1]);
+const servicePillarsBackground = pickMedia("20260506_120130684_iOS.jpeg");
+const exploreProductsBackground = pickMedia("20260506_112532376_iOS.jpeg");
+const exploreProductsVisual = pickMedia("20260506_112452061_iOS.jpeg");
+const naturalHighlightImage = pickMedia("earth-grown.jpg");
+const labGrownHighlightImage = pickMedia("lab-grown.jpg");
+const watchesHighlightImage = pickMedia("watches.jpg");
+const productHighlights = [
+  {
+    title: "Natural Diamonds",
+    image: naturalHighlightImage,
+  },
+  {
+    title: "Lab-grown Diamonds",
+    image: labGrownHighlightImage,
+  },
+  {
+    title: "High-end Watches",
+    image: watchesHighlightImage,
+  },
+];
 ---
 
 <html lang="en">
@@ -298,8 +305,7 @@ const servicePillarsBackground =
 
         <div id="lesson-1" class="mt-14 space-y-8">
           <div class="px-1 md:px-2">
-            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-black">Lesson 1</p>
-            <h2 class="mt-3 text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">Welcome</h2>
+            <h2 class="text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">Welcome</h2>
           </div>
 
           <article class="overflow-hidden rounded-[1rem] bg-[var(--b-cream)] shadow-[0_14px_36px_rgba(56,39,27,0.05)]">
@@ -332,8 +338,7 @@ const servicePillarsBackground =
 
       <section id="who-we-are" class="mt-14 space-y-8 border-t border-[#e8e2d8] pt-10 scroll-mt-28">
         <div class="px-1 md:px-2">
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-black">Lesson 2</p>
-          <h2 class="mt-3 text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">Who We Are</h2>
+          <h2 class="text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">Who We Are</h2>
         </div>
 
         <div class="space-y-5">
@@ -372,18 +377,6 @@ const servicePillarsBackground =
                   )}
                 </div>
 
-                <div class="mt-8 flex items-center gap-4 rounded-[0.9rem] border border-[#c7d3c6] bg-white/42 px-4 py-4 text-[1.02rem] leading-8 text-black">
-                  <span
-                    aria-hidden="true"
-                    class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#b9cabc] bg-[#edf3ed] text-[#294034]"
-                  >
-                    <svg viewBox="0 0 20 20" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="0.95">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.4 5.8h11.2c.88 0 1.6.72 1.6 1.6v5.2c0 .88-.72 1.6-1.6 1.6H8.6L5 17v-2.8H4.4c-.88 0-1.6-.72-1.6-1.6V7.4c0-.88.72-1.6 1.6-1.6Z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M7 9.5h6M7 12h4.2" />
-                    </svg>
-                  </span>
-                  <p class="m-0"><span class="font-semibold text-black">In conversation:</span> {video.conversation}</p>
-                </div>
               </div>
             </article>
           ))}
@@ -392,8 +385,7 @@ const servicePillarsBackground =
 
       <section id="what-we-offer" class="mt-14 space-y-8 border-t border-[#e8e2d8] pt-10 scroll-mt-28">
         <div class="px-1 md:px-2">
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-black">Lesson 3</p>
-          <h2 class="mt-3 text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">What We Offer</h2>
+          <h2 class="text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">What We Offer</h2>
           <p class="mt-6 max-w-5xl text-[1.08rem] leading-9 text-black">
             1896 is a modern luxury jewellery brand rooted in heritage. We focus on meaning, not just exclusivity - often expressed as resonance over rarity. Customers choose a piece for what it represents - not only what it is.
           </p>
@@ -403,101 +395,164 @@ const servicePillarsBackground =
           <p class="max-w-4xl text-[1.02rem] leading-8 text-black">
             1896 includes natural diamonds, lab-grown diamonds, and high-end watches. Your role is not to promote one over another. It is to guide the choice based on the customer and the moment.
           </p>
-          <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {productImages.map((image) => (
-              <div class="overflow-hidden rounded-[0.9rem] bg-[#f3ebe3]">
-                <img src={image} alt="1896 product reference" class="h-56 w-full object-cover md:h-64" loading="lazy" />
-              </div>
+          <div class="mt-6 grid gap-4 md:grid-cols-3">
+            {productHighlights.map((highlight) => (
+              <article class="overflow-hidden rounded-[0.95rem] border border-[#d9cec1] bg-white shadow-[0_12px_28px_rgba(54,35,24,0.08)]">
+                <div class="aspect-square overflow-hidden bg-[#f3ebe3]">
+                  {highlight.image ? (
+                    <img
+                      src={highlight.image}
+                      alt={highlight.title}
+                      class="h-full w-full object-contain"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="flex h-full items-center justify-center bg-[linear-gradient(135deg,#f2e7db_0%,#dec8b2_100%)] text-sm font-semibold uppercase tracking-[0.14em] text-[#705946]">
+                      Add image
+                    </div>
+                  )}
+                </div>
+                <div class="border-t border-[#d9cec1] bg-[#e7d9cb] px-4 py-3">
+                  <p class="text-center text-[1.02rem] font-semibold tracking-[0.01em] text-black">{highlight.title}</p>
+                </div>
+              </article>
             ))}
           </div>
         </article>
 
-        <article class="rounded-[1rem] bg-[var(--b-cream)] px-5 py-8 shadow-[0_14px_36px_rgba(56,39,27,0.05)] md:px-10 md:py-12 lg:px-12">
-          <div class="mb-8 pt-2">
-            <h3 class="text-[1.35rem] font-semibold tracking-[-0.015em] text-black">Explore Our Products</h3>
-            <p class="mt-4 text-[1.02rem] leading-8 text-black">Take a short moment to explore the 1896 range. This helps connect product, meaning, and conversation.</p>
-            <a href={storyboardProductSite} target="_blank" rel="noreferrer" class="mt-3 inline-flex font-semibold text-black underline decoration-[#b99f89] underline-offset-4 hover:text-black">
-              {storyboardProductSite}
-            </a>
-          </div>
+        <div class="grid gap-5 lg:grid-cols-[0.55fr_0.45fr]">
+          <article class="relative overflow-hidden rounded-[1rem] bg-[#c2d3c7] p-5 shadow-[0_14px_36px_rgba(56,39,27,0.08)] md:p-8">
+            {exploreProductsBackground && (
+              <>
+                <img
+                  src={exploreProductsBackground}
+                  alt=""
+                  class="pointer-events-none absolute inset-0 h-full w-full scale-[1.03] object-cover opacity-[0.44]"
+                  loading="lazy"
+                />
+                <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(246,252,246,0.74)_0%,rgba(226,238,231,0.64)_45%,rgba(194,212,201,0.74)_100%)]"></div>
+              </>
+            )}
+            <div class="relative z-10">
+              <h3 class="text-[1.35rem] font-semibold tracking-[-0.015em] text-black">Explore Our Products</h3>
+              <p class="mt-4 text-[1.02rem] leading-8 text-black">
+                Take a short moment to explore the 1896 range. This helps connect product, meaning, and conversation.
+              </p>
+              <div class="mt-6 grid gap-3">
+                {productReferenceLinks.map((link) => (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    class="group rounded-[0.9rem] border border-[#b7c7bb] bg-white/80 px-4 py-4 shadow-[0_10px_24px_rgba(46,33,25,0.1)] transition hover:-translate-y-[1px] hover:bg-white hover:shadow-[0_14px_30px_rgba(46,33,25,0.14)]"
+                  >
+                    <p class="text-sm font-semibold uppercase tracking-[0.16em] text-[#294034]">{link.label}</p>
+                    <p class="mt-1 break-all text-sm text-black underline decoration-[#86a18f] decoration-[1.8px] underline-offset-4">{link.href}</p>
+                  </a>
+                ))}
+              </div>
 
-          <ol class="grid gap-4 md:grid-cols-2">
-            {productExplorationSteps.map((step, index) => (
-              <li class="rounded-[0.95rem] border border-[#d8c8b6] bg-white/65 px-4 py-4 shadow-[0_10px_24px_rgba(66,45,30,0.05)] transition hover:-translate-y-[1px] hover:shadow-[0_14px_30px_rgba(66,45,30,0.08)] md:px-5">
-                <div class="flex items-center gap-4">
-                  <span class="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[#cfbba6] bg-[#f7efe6] text-center text-[0.7rem] font-semibold uppercase leading-tight tracking-[0.14em] text-[#705946]">
-                    Step {index + 1}
-                  </span>
-                  <p class="text-[1.02rem] leading-7 text-black">{step}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-
-          <div class="mt-10 grid gap-5 md:mt-12 md:grid-cols-2">
-            <div class="border-l-2 border-[#d5c6b3] pl-4 md:pl-5">
-              <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">In-store application</p>
-              <ul class="mt-4 list-disc space-y-3 pl-5 text-[1.02rem] leading-8 text-black marker:text-black">
-                <li>Choose a piece.</li>
-                <li>Notice how it feels and sits.</li>
-                <li>Practise describing it simply and naturally to a colleague.</li>
-              </ul>
-            </div>
-
-            <div class="border-l-2 border-[#d5c6b3] pl-4 md:pl-5">
-              <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">Check yourself:</p>
-              <ul class="mt-4 list-disc space-y-3 pl-5 text-[1.02rem] leading-8 text-black marker:text-black">
-                <li>Did you focus on meaning?</li>
-                <li>Did you keep the language natural?</li>
-                <li>Could you connect to the real moment?</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="mt-10 rounded-[0.9rem] border border-[#ced8ce] bg-white p-5 md:mt-12 md:p-6">
-            <div class="flex items-center gap-3">
-              <span class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#cdb89f] bg-[#f8f1e8] text-[#735c47]">
-                <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.1">
-                  <circle cx="10" cy="10" r="6.2" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.8 10.2 9.4 11.8 12.4 8.7" />
-                </svg>
-              </span>
-              <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">Knowledge Check</p>
-            </div>
-            <div class="mt-4 grid gap-4 md:grid-cols-[1.05fr_0.95fr] md:items-start">
-              {knowledgeCheckCustomerImage && (
-                <figure class="overflow-hidden rounded-[0.82rem] border border-[#d9cec0] bg-[#f7efe5] md:order-2 md:justify-self-end">
-                  <img src={knowledgeCheckCustomerImage} alt="Customer in-store moment" class="h-56 w-full object-cover md:h-full md:min-h-[14rem]" loading="lazy" />
+              {exploreProductsVisual && (
+                <figure class="relative mt-6 overflow-hidden rounded-[0.98rem] border border-[#b6c7ba] bg-white/42 shadow-[0_12px_28px_rgba(44,33,24,0.1)]">
+                  <img src={exploreProductsVisual} alt="1896 product exploration visual" class="h-72 w-full object-cover md:h-80 lg:h-96" loading="lazy" />
+                  <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(170deg,rgba(20,14,11,0.12)_0%,rgba(20,14,11,0.42)_100%)]"></div>
                 </figure>
               )}
-              <div class={knowledgeCheckCustomerImage ? "md:order-1" : "md:col-span-2"}>
-                <p class="text-[1.02rem] leading-8 text-black">Let's pause for a moment.</p>
-                <p class="mt-4 text-[1.02rem] leading-8 text-black">
-                  {knowledgeCheckLesson3.promptLead} <span class="font-semibold">{knowledgeCheckLesson3.promptQuote}</span> {knowledgeCheckLesson3.promptTail}
-                </p>
-                <div class="mt-5 space-y-3">
-                  {knowledgeCheckLesson3.options.map((option) => (
-                    <div class="rounded-[0.75rem] bg-[#f7f0e6] px-4 py-3 text-black">{option}</div>
-                  ))}
-                </div>
+
+              <div class="mt-6 space-y-4">
+                {productExplorationSteps.map((step, index) => (
+                  <article class="rounded-[0.8rem] border border-[#bfd0c3] bg-white/62 px-4 py-3 backdrop-blur-[1px]">
+                    <div class="flex items-start gap-3">
+                      <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#b8cabe] bg-[#edf3ed] text-[0.72rem] font-semibold text-[#294034]">
+                        {index + 1}
+                      </span>
+                      <p class="pt-0.5 text-[1.02rem] leading-7 text-black">{step}</p>
+                    </div>
+                  </article>
+                ))}
               </div>
             </div>
-            <details class="group mt-5 rounded-[0.8rem] border border-[#ced8ce] bg-white p-4">
-              <summary class="cursor-pointer list-none text-sm font-semibold uppercase tracking-[0.14em] text-black [&::-webkit-details-marker]:hidden">
-                Reveal feedback
-              </summary>
+          </article>
+
+          <article class="rounded-[1rem] bg-white/88 p-5 shadow-[0_14px_36px_rgba(56,39,27,0.05)] md:p-8">
+            <div class="space-y-5">
+              <div class="rounded-[0.95rem] border border-[#d8e0d8] bg-[#f0f4f0] p-5">
+                <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">In-store application</p>
+                <ul class="mt-4 list-disc space-y-3 pl-5 text-[1.02rem] leading-8 text-black marker:text-black">
+                  <li>Choose a piece.</li>
+                  <li>Notice how it feels and sits.</li>
+                  <li>Practise describing it simply and naturally to a colleague.</li>
+                </ul>
+              </div>
+
+              <div class="rounded-[0.95rem] border border-[#d8e0d8] bg-[#f0f4f0] p-5">
+                <div class="flex items-center gap-3">
+                  <span class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#cdb89f] bg-[#f8f1e8] text-[#735c47]">
+                    <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.1">
+                      <circle cx="10" cy="10" r="6.2" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M7.8 10.2 9.4 11.8 12.4 8.7" />
+                    </svg>
+                  </span>
+                  <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">Check yourself:</p>
+                </div>
+                <ul class="mt-4 list-disc space-y-3 pl-5 text-[1.02rem] leading-8 text-black marker:text-black">
+                  <li>Did you focus on meaning?</li>
+                  <li>Did you keep the language natural?</li>
+                  <li>Could you connect to the real moment?</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <article class="rounded-[1rem] bg-white/88 p-5 shadow-[0_14px_36px_rgba(56,39,27,0.05)] md:p-8">
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#cdb89f] bg-[#f8f1e8] text-[#735c47]">
+              <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.1">
+                <circle cx="10" cy="10" r="6.2" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7.8 10.2 9.4 11.8 12.4 8.7" />
+              </svg>
+            </span>
+            <p class="text-sm font-semibold uppercase tracking-[0.17em] text-black">Knowledge Check</p>
+          </div>
+          <div class="mt-4 grid gap-4 md:grid-cols-[1.05fr_0.95fr] md:items-start">
+            {knowledgeCheckCustomerImage && (
+              <figure class="overflow-hidden rounded-[0.82rem] border border-[#d9cec0] bg-[#f7efe5] md:order-2 md:justify-self-end">
+                <img src={knowledgeCheckCustomerImage} alt="Customer in-store moment" class="h-56 w-full object-cover md:h-full md:min-h-[14rem]" loading="lazy" />
+              </figure>
+            )}
+            <div class={knowledgeCheckCustomerImage ? "md:order-1" : "md:col-span-2"}>
+              <p class="text-[1.02rem] leading-8 text-black">Let's pause for a moment.</p>
               <p class="mt-4 text-[1.02rem] leading-8 text-black">
-                The best answer is <span class="font-semibold">{knowledgeCheckLesson3.answer}</span>. {knowledgeCheckLesson3.feedback}
+                {knowledgeCheckLesson3.promptLead} <span class="font-semibold">{knowledgeCheckLesson3.promptQuote}</span> {knowledgeCheckLesson3.promptTail}
               </p>
-            </details>
+              <div
+                class="mt-5 space-y-3"
+                data-kc3-options
+                data-kc3-answer={knowledgeCheckLesson3.answer}
+                data-kc3-feedback-copy={knowledgeCheckLesson3.feedback}
+              >
+                {knowledgeCheckLesson3.options.map((option) => (
+                  <button
+                    type="button"
+                    class="tfg-quiz-option w-full rounded-[0.75rem] border border-[#dacbbb] bg-[#f7f0e6] px-4 py-3 text-left text-black transition hover:bg-[#f3e8da]"
+                    data-kc3-option={option.id}
+                    data-kc3-correct={option.id === knowledgeCheckLesson3.answer ? "true" : "false"}
+                    data-kc3-state="idle"
+                  >
+                    <span class="font-semibold">{option.id})</span> {option.text}
+                  </button>
+                ))}
+              </div>
+              <p class="mt-4 hidden rounded-[0.75rem] border px-4 py-3 text-[1.02rem] leading-8" data-kc3-feedback></p>
+            </div>
           </div>
         </article>
       </section>
 
       <section id="living-the-brand" class="mt-14 space-y-8 border-t border-[#e8e2d8] pt-10 scroll-mt-28">
         <div class="px-1 md:px-2">
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-black">Lesson 4</p>
-          <h2 class="mt-3 text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">Living the 1896 Brand</h2>
+          <h2 class="text-[2rem] font-medium uppercase tracking-[0.08em] text-black md:text-[2.45rem]">Living the 1896 Brand</h2>
           <p class="mt-6 max-w-5xl text-[1.08rem] leading-9 text-black">
             At 1896, the brand is experienced through behaviour. How a customer is welcomed, how jewellery is handled,
             and how conversations are paced all shape the experience.
@@ -559,22 +614,26 @@ const servicePillarsBackground =
               <h3 class="text-[1.35rem] font-semibold tracking-[-0.015em] text-black">Knowledge Check</h3>
             </div>
             <div class="mt-5 space-y-5">
-              {knowledgeChecksLesson4.map((check) => (
+              {knowledgeChecksLesson4.map((check, checkIndex) => (
                 <div class="border-t border-[#d8e0d8] pt-5 first:border-t-0 first:pt-0">
                   <p class="text-[1.02rem] leading-8 text-black">{check.prompt}</p>
                   <div class="mt-4 space-y-3">
-                    {check.options.map((option) => (
-                      <div class="rounded-[0.72rem] bg-[#f0f4f0] px-4 py-3 text-black">{option}</div>
+                    {check.options.map((option, optionIndex) => (
+                      <button
+                        type="button"
+                        class="tfg-quiz-option w-full rounded-[0.72rem] border border-[#bfd0c3] bg-[#f0f4f0] px-4 py-3 text-left text-black transition hover:bg-white/95"
+                        data-l4-option={optionIndex}
+                        data-l4-question={checkIndex}
+                        data-l4-correct={String.fromCharCode(65 + optionIndex) === check.answer ? "true" : "false"}
+                        data-kc3-state="idle"
+                      >
+                        {option}
+                      </button>
                     ))}
                   </div>
-                  <details class="group mt-4 rounded-[0.8rem] border border-[#ced8ce] bg-white p-4">
-                    <summary class="cursor-pointer list-none text-sm font-semibold uppercase tracking-[0.14em] text-black [&::-webkit-details-marker]:hidden">
-                      Reveal feedback
-                    </summary>
-                    <p class="mt-4 text-[1.02rem] leading-8 text-black">
-                      The best answer is <span class="font-semibold">{check.answer}</span>. <span set:html={check.feedback}></span>
-                    </p>
-                  </details>
+                  <p class="mt-4 hidden rounded-[0.8rem] border px-4 py-3 text-[1.02rem] leading-8" data-l4-feedback={checkIndex}>
+                    The best answer is <span class="font-semibold">{check.answer}</span>. <span set:html={check.feedback}></span>
+                  </p>
                 </div>
               ))}
             </div>
@@ -586,9 +645,9 @@ const servicePillarsBackground =
       <section id="closing" class="mt-10 scroll-mt-28">
         <article class="overflow-hidden rounded-[1rem] bg-[radial-gradient(circle_at_18%_14%,rgba(183,205,194,0.22),transparent_36%),radial-gradient(circle_at_86%_82%,rgba(150,173,161,0.15),transparent_44%),linear-gradient(140deg,#22362d_0%,#18271f_52%,#141f1b_100%)] px-5 py-10 text-center shadow-[0_18px_40px_rgba(22,39,32,0.34)] md:px-10 md:py-14 lg:px-12">
           {(logoLight || logoDark) && <img src={logoLight || logoDark} alt="1896 logo" class="mx-auto mb-10 h-10 w-auto object-contain md:mb-14" />}
-          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-[#efe4d7]">Before you continue</p>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-[#efe4d7]">Before we end</p>
           <p class="mx-auto mt-4 max-w-5xl text-[1.02rem] leading-8 text-[#f4eadf]">Take a moment to pause. Think about your next interaction.</p>
-          <h2 class="mx-auto mt-4 max-w-5xl text-[1.95rem] font-semibold tracking-[-0.03em] text-[#fffaf3] md:text-[2.45rem]">
+          <h2 class="mx-auto mt-4 max-w-5xl text-[1.75rem] font-normal leading-[1.16] tracking-[0.005em] text-[#fffaf3] md:text-[1.9rem]">
             Not what you will say - but what you will notice.
           </h2>
           <p class="mx-auto mt-4 max-w-3xl text-[1.02rem] leading-8 text-[#f4eadf]">
@@ -596,12 +655,23 @@ const servicePillarsBackground =
           </p>
           <div class="mx-auto mt-8 grid max-w-5xl gap-4 md:grid-cols-3">
             {closingFocusStatements.map((item) => (
-              <article class="flex min-h-[10rem] items-center justify-center overflow-hidden rounded-[0.95rem] border border-[#4c6157] bg-[linear-gradient(145deg,#4f675d_0%,#28342e_100%)] p-4 text-center md:min-h-[10.75rem] md:p-5">
-                <div class="relative z-10">
-                  <p class="text-[1.25rem] font-semibold leading-tight tracking-[-0.01em] text-[#fffaf3] md:text-[1.4rem]">
-                    {item}
-                  </p>
-                </div>
+              <article class="tfg-flip-card min-h-[10rem] md:min-h-[10.75rem]" data-flip-card>
+                <button type="button" class="tfg-flip-card-trigger min-h-[10rem] rounded-[0.95rem] border border-[#4c6157] md:min-h-[10.75rem]" data-flip-trigger aria-label={`Reveal: ${item}`}>
+                  <span class="tfg-flip-card-inner">
+                    <span class="tfg-flip-card-face tfg-flip-card-front bg-[linear-gradient(145deg,#4f675d_0%,#28342e_100%)]">
+                      {logoLight || logoDark ? (
+                        <img src={logoLight || logoDark} alt="1896 logo" class="h-10 w-auto object-contain md:h-12" />
+                      ) : (
+                        <span class="text-sm font-semibold uppercase tracking-[0.18em] text-[#fffaf3]">Logo</span>
+                      )}
+                    </span>
+                    <span class="tfg-flip-card-face tfg-flip-card-back bg-[linear-gradient(145deg,#5a7368_0%,#32443c_100%)]">
+                      <span class="text-[1.25rem] font-semibold leading-tight tracking-[-0.01em] text-[#fffaf3] md:text-[1.4rem]">
+                        {item}
+                      </span>
+                    </span>
+                  </span>
+                </button>
               </article>
             ))}
           </div>
@@ -614,11 +684,18 @@ const servicePillarsBackground =
 
     <script is:inline>
       const mobileNavs = document.querySelectorAll("[data-mobile-nav]");
+      const flipCards = document.querySelectorAll("[data-flip-card]");
 
       document.addEventListener("click", (event) => {
         mobileNavs.forEach((menu) => {
           if (!menu.contains(event.target)) {
             menu.removeAttribute("open");
+          }
+        });
+
+        flipCards.forEach((card) => {
+          if (!card.contains(event.target)) {
+            card.classList.remove("is-flipped");
           }
         });
       });
@@ -642,6 +719,97 @@ const servicePillarsBackground =
               otherPillar.removeAttribute("open");
             }
           });
+        });
+      });
+
+      flipCards.forEach((card) => {
+        const trigger = card.querySelector("[data-flip-trigger]");
+        if (!trigger) return;
+
+        trigger.addEventListener("click", () => {
+          card.classList.toggle("is-flipped");
+        });
+      });
+
+      const lesson3OptionsContainer = document.querySelector("[data-kc3-options]");
+      const lesson3OptionButtons = document.querySelectorAll("[data-kc3-option]");
+      const lesson3Feedback = document.querySelector("[data-kc3-feedback]");
+
+      if (lesson3OptionsContainer && lesson3OptionButtons.length > 0 && lesson3Feedback) {
+        const correctAnswer = lesson3OptionsContainer.dataset.kc3Answer || "B";
+        const feedbackCopy = lesson3OptionsContainer.dataset.kc3FeedbackCopy || "";
+
+        lesson3OptionButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const isCorrect = button.dataset.kc3Correct === "true";
+
+            lesson3OptionButtons.forEach((otherButton) => {
+              if (otherButton === button) {
+                otherButton.setAttribute("data-kc3-state", isCorrect ? "correct" : "wrong");
+                otherButton.setAttribute("aria-pressed", "true");
+                return;
+              }
+
+              otherButton.setAttribute("data-kc3-state", "idle");
+              otherButton.setAttribute("aria-pressed", "false");
+            });
+
+            lesson3Feedback.classList.remove("hidden");
+
+            if (isCorrect) {
+              lesson3Feedback.setAttribute("data-kc3-feedback-state", "correct");
+              lesson3Feedback.textContent = `The best answer is ${correctAnswer}. ${feedbackCopy}`;
+              return;
+            }
+
+            lesson3Feedback.setAttribute("data-kc3-feedback-state", "wrong");
+            lesson3Feedback.textContent = "Try again.";
+          });
+        });
+      }
+
+      const lesson4OptionButtons = document.querySelectorAll("[data-l4-option]");
+      const lesson4FeedbackByQuestion = new Map();
+
+      document.querySelectorAll("[data-l4-feedback]").forEach((feedbackElement) => {
+        lesson4FeedbackByQuestion.set(feedbackElement.dataset.l4Feedback, {
+          element: feedbackElement,
+          correctHtml: feedbackElement.innerHTML,
+        });
+      });
+
+      lesson4OptionButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const questionId = button.dataset.l4Question;
+          if (!questionId) return;
+
+          const questionButtons = document.querySelectorAll(`[data-l4-question="${questionId}"]`);
+          const isCorrect = button.dataset.l4Correct === "true";
+
+          questionButtons.forEach((questionButton) => {
+            if (questionButton === button) {
+              questionButton.setAttribute("data-kc3-state", isCorrect ? "correct" : "wrong");
+              questionButton.setAttribute("aria-pressed", "true");
+              return;
+            }
+
+            questionButton.setAttribute("data-kc3-state", "idle");
+            questionButton.setAttribute("aria-pressed", "false");
+          });
+
+          const feedbackEntry = lesson4FeedbackByQuestion.get(questionId);
+          if (!feedbackEntry) return;
+
+          feedbackEntry.element.classList.remove("hidden");
+
+          if (isCorrect) {
+            feedbackEntry.element.setAttribute("data-kc3-feedback-state", "correct");
+            feedbackEntry.element.innerHTML = feedbackEntry.correctHtml;
+            return;
+          }
+
+          feedbackEntry.element.setAttribute("data-kc3-feedback-state", "wrong");
+          feedbackEntry.element.textContent = "Try again.";
         });
       });
     </script>
